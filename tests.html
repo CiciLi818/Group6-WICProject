@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storage tests</title>
+    <style>
+        body { font-family: Tahoma, sans-serif; margin: 40px; }
+        .pass { color: #1a7f37; }
+        .fail { color: #cf222e; font-weight: bold; }
+        #summary { font-size: 1.4em; margin-bottom: 20px; }
+        li { margin: 4px 0; }
+    </style>
+    <script src="js/storage.js"></script>
+    <script src="js/storage.test.js"></script>
+</head>
+<body>
+    <h1>storage.js tests</h1>
+    <p id="summary"></p>
+    <ul id="results"></ul>
+
+    <h2>Manual checks</h2>
+    <p>
+        <button id="seed-button">Load demo data</button>
+        <button id="csv-button">Download CSV</button>
+        <button id="clear-button">Delete all data</button>
+    </p>
+    <pre id="output"></pre>
+
+    <script>
+        const results = runStorageTests();
+        const passed = results.filter((r) => r.pass).length;
+        const summary = document.querySelector("#summary");
+        summary.textContent = `${passed} / ${results.length} passed`;
+        summary.className = passed === results.length ? "pass" : "fail";
+        const list = document.querySelector("#results");
+        for (const r of results) {
+            const li = document.createElement("li");
+            li.className = r.pass ? "pass" : "fail";
+            li.textContent = (r.pass ? "✔ " : "✘ ") + r.name + (r.pass ? "" : " — " + r.error);
+            list.appendChild(li);
+        }
+
+        const show = (label, value) => {
+            document.querySelector("#output").textContent = label + "\n" + JSON.stringify(value, null, 2);
+        };
+        document.querySelector("#seed-button").addEventListener("click", () => {
+            SymptomStore.seedDemoData();
+            show("Pain trend after loading demo data:", SymptomStore.getPainTrend().data);
+        });
+        document.querySelector("#csv-button").addEventListener("click", () => SymptomStore.downloadCSV());
+        document.querySelector("#clear-button").addEventListener("click", () => {
+            if (confirm("Delete all saved entries?")) show("Result:", SymptomStore.deleteAllEntries(true));
+        });
+    </script>
+</body>
+</html>
