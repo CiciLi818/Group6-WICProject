@@ -32,7 +32,7 @@
     const result = SymptomStore.listEntries();
     if (!result.ok) throw new Error(Object.values(result.errors).join(' '));
     const today = SymptomStore.getEntryByDate(SymptomStore.todayString());
-    main.innerHTML = `<h1>Home</h1><p id="welcome" class="muted"></p><section class="card"><p class="tag">Today's check-in</p><h2>${today ? 'Your check-in is saved.' : 'How are you feeling today?'}</h2><p>${today ? 'You can return to update your entry.' : 'Take a moment to record how you feel.'}</p><a class="action primary" href="#check-in">${today ? 'Edit today’s check-in' : 'Start daily check-in'} →</a></section><h2>Explore your records</h2><p class="muted">${result.data.length} saved ${result.data.length === 1 ? 'entry' : 'entries'} in this browser.</p><div class="grid"><a class="card" href="#calendar"><h2>Calendar</h2><p>Logged days · Coming next</p></a><a class="card" href="#trends"><h2>Trends</h2><p>Symptom patterns · Coming next</p></a></div>`;
+    main.innerHTML = `<h1>Home</h1><p id="welcome" class="muted"></p><section class="card"><p class="tag">Today's check-in</p><h2>${today ? 'Your check-in is saved.' : 'How are you feeling today?'}</h2><p>${today ? 'You can return to update your entry.' : 'Take a moment to record how you feel.'}</p><a class="action primary" href="#check-in">${today ? 'Edit today’s check-in' : 'Start daily check-in'} →</a></section><h2>Explore your records</h2><p class="muted">${result.data.length} saved ${result.data.length === 1 ? 'entry' : 'entries'} in this browser.</p><div class="grid"><a class="card" href="#calendar"><h2>Calendar</h2><p>Logged days · Coming next</p></a><a class="card" href="#trends"><h2>Trends</h2><p>Pain and symptom patterns</p></a></div>`;
     main.querySelector('#welcome').textContent = `Welcome, ${user.name}. Your symptoms, at your own pace.`;
   }
   function checkIn() {
@@ -82,6 +82,7 @@
       if (route === 'login' || route === 'register') authScreen(route === 'register');
       else if (route === 'dashboard') dashboard(user);
       else if (route === 'check-in') checkIn();
+      else if (route === 'trends') TrackerCharts.mount(main, SymptomStore);
       else main.innerHTML = `<h1>${route === 'calendar' ? 'Calendar' : 'Trends'}</h1><p class="muted">${route === 'calendar' ? 'Your logged days, at a glance.' : 'Patterns from your check-ins.'}</p><section class="card empty"><p class="tag">Week 2 placeholder</p><h2>${route === 'calendar' ? 'Your calendar is coming next.' : 'Your charts are coming next.'}</h2><p>${route === 'calendar' ? 'This page will show period days and saved entries.' : 'This page will show pain over time and symptom frequency.'}</p><a class="action" href="#check-in">Go to check-in</a></section>`;
       document.title = `${main.querySelector('h1').textContent} · Women's Health Tracker`;main.focus();
     } catch (error) {
